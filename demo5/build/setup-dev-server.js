@@ -45,13 +45,13 @@ module.exports = function setupDevServer (app, templatePath, cb) {
     new webpack.NoEmitOnErrorsPlugin()
   )
 
-  // dev middleware
-  const clientCompiler = webpack(clientConfig)
+  const clientCompiler = webpack(clientConfig) // 返回一个compiler实例，用于控制webpack启动
+  // webpack devserver是基于webpack-dev-middleware实现的，webpack-dev-middleware是一个express中间件
   const devMiddleware = require('webpack-dev-middleware')(clientCompiler, {
-    publicPath: clientConfig.output.publicPath,
-    noInfo: true
+    publicPath: clientConfig.output.publicPath, // 与webpack配置中的publicPath含义一致，
+    noInfo: true // 不输出info类型的日志到控制台
   })
-  app.use(devMiddleware)
+  app.use(devMiddleware) // 注册中间件
   clientCompiler.plugin('done', stats => {
     stats = stats.toJson()
     stats.errors.forEach(err => console.error(err))
@@ -64,7 +64,7 @@ module.exports = function setupDevServer (app, templatePath, cb) {
     update()
   })
 
-  // hot middleware
+  // webpack devserver虽然是基于webpack-dev-middleware实现的，但webpack-dev-middleware并没有实现模块热替换功能，需要额外接入webpack-hot-middleware实现热替换
   app.use(require('webpack-hot-middleware')(clientCompiler, { heartbeat: 5000 }))
 
   // watch and update server renderer

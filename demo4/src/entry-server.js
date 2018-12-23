@@ -31,7 +31,7 @@ export default context => {
         // 当我们将状态附加到上下文，
         // 并且 `template` 选项用于 renderer 时，
         // 状态将自动序列化为 `window.__INITIAL_STATE__`，并注入 HTML。
-        context.state = store.state
+        // context.state = store.state
         resolve(app)
       }).catch(reject)
     }, reject)
